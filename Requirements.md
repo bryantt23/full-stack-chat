@@ -72,3 +72,43 @@
 - Create a `/api/messages` POST endpoint to save new messages to MongoDB.
 - Add a form in the `Chat` component for sending messages.
 - Handle form submission to post new messages to the backend and update the chat window.
+
+## Version 6: Real-Time Updates with WebSockets
+**Objective**: Add real-time message updates using WebSockets.
+
+**Requirements**:
+- Set up a WebSocket server using Socket.io.
+- Implement WebSocket events for sending and receiving messages.
+- Ensure real-time updates for messages in the chat window.
+
+**Tasks**:
+- Install and set up Socket.io on the backend.
+- Update the backend to handle WebSocket connections and events.
+- Update the React app to connect to the WebSocket server and handle real-time updates.
+- Ensure messages sent and received are updated in real-time in the chat window.
+
+## Version 7: Scroll-Back for Older Messages
+**Objective**: Implement scroll-back functionality to load older messages.
+
+**Requirements**:
+- Add pagination to the `/api/messages` endpoint to fetch messages in chunks.
+- Implement logic in the React app to load more messages when the user scrolls up.
+
+**Tasks**:
+- Modify the `/api/messages` endpoint to support pagination (e.g., `limit`, `before` parameters).
+- Update the React app to detect when the user scrolls to the top of the chat window.
+- Fetch and display older messages when the user scrolls up.
+
+## Version 8: Basic User Interface Improvements
+**Objective**: Improve the user interface with basic styling and usability features.
+
+**Requirements**:
+- Enhance the chat window styling for better readability.
+- Add a loading indicator when fetching older messages.
+- Ensure the chat window scrolls to the bottom when new messages are received.
+
+**Tasks**:
+- Update `styles.css` to improve the chat window appearance.
+- Add a loading spinner or indicator for when older messages are being fetched.
+- Implement logic to automatically scroll to the bottom of the chat window when new messages arrive.
+
