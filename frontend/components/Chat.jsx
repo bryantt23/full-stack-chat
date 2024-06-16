@@ -1,19 +1,24 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Message from './Message';
+import { getMessages } from '../services/messages';
 
 function Chat() {
-    const messages = [
-        { id: 1, name: "John", message: "Hi" },
-        { id: 2, name: "Jane", message: "Hello how are you?" },
-        { id: 3, name: "John", message: "I am hungry" }
-    ];
+    const [messages, setMessages] = useState([])
+
+    useEffect(() => {
+        async function fetchData() {
+            const res = await getMessages()
+            setMessages(res)
+        }
+        fetchData()
+    }, [])
 
     return (
         <div>
             <h1>Chat Application</h1>
 
             <ul>
-                {messages.map(message => <Message key={message.id} message={message} />)}
+                {messages.map(message => <Message key={message._id} message={message} />)}
             </ul>
 
             <form>

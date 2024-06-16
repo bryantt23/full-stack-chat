@@ -1,8 +1,11 @@
 const express = require("express")
+const cors = require("cors")
 const app = express()
 const PORT = 3000
 const Message = require('./models/message');
 require('dotenv').config({ path: './.env' });
+
+app.use(cors())
 
 const mongoose = require("mongoose")
 mongoose.set("strictQuery", false)
