@@ -73,7 +73,7 @@
 - Add a form in the `Chat` component for sending messages.
 - Handle form submission to post new messages to the backend and update the chat window.
 
-## Version 6: Real-Time Updates with WebSockets
+## Version 6: Real-Time Updates with WebSockets 
 **Objective**: Add real-time message updates using WebSockets.
 
 **Requirements**:
