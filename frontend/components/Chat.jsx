@@ -19,7 +19,7 @@ function Chat() {
         onMessage: (event) => {
             console.log('WebSocket message received:', event.data);
             setMessages(prev => [...prev, JSON.parse(event.data)])
-            scrollToBottom()
+            setTimeout(scrollToBottom, 100);
         }
     });
 
