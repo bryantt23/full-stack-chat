@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Message from './Message';
 import { getMessages } from '../services/messages';
 import useWebSocket from 'react-use-websocket';
@@ -19,6 +19,7 @@ function Chat() {
         onMessage: (event) => {
             console.log('WebSocket message received:', event.data);
             setMessages(prev => [...prev, JSON.parse(event.data)])
+            scrollToBottom()
         }
     });
 
@@ -26,9 +27,12 @@ function Chat() {
     const [message, setMessage] = useState("");
     const [name, setName] = useState("anonymous");
 
+    const endOfMessagesRef = useRef(null)
+
     async function fetchData() {
         const messages = await getMessages();
         setMessages(messages);
+        scrollToBottom()
     }
 
     useEffect(() => {
@@ -41,19 +45,24 @@ function Chat() {
         sendMessage(JSON.stringify(newMessage))
     };
 
+    const scrollToBottom = () => {
+        endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" })
+    }
+
     return (
         <div className='chat-container'>
             <h1>Chat Application</h1>
 
             <div className="middle">
-                <div>
+                <div className="message-list-container">
                     <ul className="message-list">
                         {messages.map((message) => (
                             <Message key={message._id} message={message} />
                         ))}
+                        <div ref={endOfMessagesRef} />
                     </ul>
                 </div>
-                <div>
+                <div className='form-container'>
                     <form onSubmit={handleSubmit}>
                         <label>Enter name</label>
                         <input
