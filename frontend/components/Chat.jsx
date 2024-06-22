@@ -1,17 +1,26 @@
 import React, { useState, useEffect } from 'react'
 import Message from './Message';
-import { getMessages } from '../services/messages';
+import { getMessages, sendMessage } from '../services/messages';
 
 function Chat() {
     const [messages, setMessages] = useState([])
+    const [message, setMessage] = useState("")
+    const [name, setName] = useState("anonymous")
+
+    async function fetchData() {
+        const messages = await getMessages()
+        setMessages(messages)
+    }
 
     useEffect(() => {
-        async function fetchData() {
-            const res = await getMessages()
-            setMessages(res)
-        }
         fetchData()
     }, [])
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        await sendMessage(name, message)
+        fetchData()
+    }
 
     return (
         <div>
@@ -21,10 +30,22 @@ function Chat() {
                 {messages.map(message => <Message key={message._id} message={message} />)}
             </ul>
 
-            <form>
+            <form onSubmit={handleSubmit}>
+                <label>Enter name</label>
+                <input
+                    type="text"
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                />
+
                 <label>Enter text</label>
-                <input type="text" />
-                <input type="submit" />
+                <input
+                    type="text"
+                    value={message}
+                    onChange={e => setMessage(e.target.value)}
+                />
+
+                <button type="submit">Send Message</button>
             </form>
         </div>
     )
