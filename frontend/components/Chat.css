@@ -1,0 +1,23 @@
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.message-list {
+  flex: 1;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.message-list li {
+  margin-bottom: 10px;
+}
+
+.middle {
+  display: flex;
+}

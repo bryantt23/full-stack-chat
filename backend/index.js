@@ -43,7 +43,7 @@ const addMessage = async (name, message) => {
 
     const newMessage = new Message({ name, message })
     await newMessage.save();
-    return new Message
+    return newMessage
 }
 
 app.post("/api/messages", async (req, res) => {
