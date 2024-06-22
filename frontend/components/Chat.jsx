@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Message from './Message';
-import { getMessages, sendMessage } from '../services/messages';
+import { getMessages } from '../services/messages';
 import useWebSocket from 'react-use-websocket';
 
 const WS_URL = "ws://localhost:3000";
 
 function Chat() {
-    const { sendJsonMessage } = useWebSocket(WS_URL, {
+    const { sendMessage } = useWebSocket(WS_URL, {
         onOpen: () => {
             console.log('WebSocket connection established.');
         },
@@ -18,6 +18,7 @@ function Chat() {
         },
         onMessage: (event) => {
             console.log('WebSocket message received:', event.data);
+            setMessages(prev => [...prev, JSON.parse(event.data)])
         }
     });
 
@@ -37,9 +38,7 @@ function Chat() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const newMessage = { name, message };
-        sendJsonMessage(newMessage);
-        await sendMessage(name, message);
-        fetchData();
+        sendMessage(JSON.stringify(newMessage))
     };
 
     return (
