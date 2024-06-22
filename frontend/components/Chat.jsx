@@ -28,16 +28,26 @@ function Chat() {
     const [name, setName] = useState("anonymous");
 
     const endOfMessagesRef = useRef(null)
+    const topOfMessagesRef = useRef(null)
 
     async function fetchData() {
-        const messages = await getMessages();
-        setMessages(messages);
+        const messagesData = await getMessages();
+        setMessages(messagesData);
         scrollToBottom()
     }
 
     useEffect(() => {
         fetchData();
     }, []);
+
+    const handleScroll = async (e) => {
+        if (e.currentTarget.scrollTop === 0) {
+            console.log("on top!")
+            const data = await getMessages({ id: messages[0]._id, count: 3, backward: true });
+            console.log("🚀 ~ handleScroll ~ data:", data)
+
+        }
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -55,7 +65,8 @@ function Chat() {
 
             <div className="middle">
                 <div className="message-list-container">
-                    <ul className="message-list">
+                    <ul className="message-list" onScroll={handleScroll}>
+                        <div ref={topOfMessagesRef} />
                         {messages.map((message) => (
                             <Message key={message._id} message={message} />
                         ))}

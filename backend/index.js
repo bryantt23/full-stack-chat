@@ -28,8 +28,13 @@ app.get('/', (req, res) => {
 })
 
 app.get("/api/messages", async (req, res) => {
+    const { id, count = 10, backward = true } = req.query
+    let query = {}
+    if (id) {
+        query._id = backward === 'true' ? { $lt: id } : { $gt: id }
+    }
     try {
-        const messages = await Message.find().sort({ createdAt: 1 })
+        const messages = await Message.find(query).sort({ createdAt: backward === "true" ? -1 : 1 }).limit(Number(count))
         res.json(messages)
     } catch (error) {
         res.status(500).json({ message: 'Error fetching messages', error })

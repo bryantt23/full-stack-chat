@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-export const getMessages = async () => {
-    const res = await axios.get("http://localhost:3000/api/messages")
+export const getMessages = async (params = {}) => {
+    const res = await axios.get("http://localhost:3000/api/messages", { params })
     return res.data
 }
 
