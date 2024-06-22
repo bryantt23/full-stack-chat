@@ -27,17 +27,26 @@ function Chat() {
     const [messages, setMessages] = useState([]);
     const [message, setMessage] = useState("");
     const [name, setName] = useState("anonymous");
+    const [loading, setLoading] = useState(false);
 
     const focusRef = useRef(null);
     const messageListRef = useRef(null);
 
+    async function delay() {
+        return new Promise(resolve => {
+            setTimeout(resolve, 2000)
+        })
+    }
+
     async function fetchData(limit = 7, beforeId = null, prepend = false) {
+        setLoading(true);
         const params = { limit };
         if (beforeId) {
             params.beforeId = beforeId;
         }
         const newMessages = await getMessages(params);
         if (prepend) {
+            await delay()
             setMessages(prev => {
                 const currentHeight = messageListRef.current.scrollHeight;
                 const updatedMessages = [...newMessages, ...prev];
@@ -50,6 +59,7 @@ function Chat() {
             setMessages(newMessages);
             scrollToBottom();
         }
+        setLoading(false);
     }
 
     useEffect(() => {
@@ -83,7 +93,7 @@ function Chat() {
             <div className="middle">
                 <div className="message-list-container">
                     <ul className="message-list" ref={messageListRef} onScroll={handleScroll}>
-                        <div ref={focusRef} />
+                        {loading && <div className="spinner" />}
                         {messages.map((message) => (
                             <Message key={message._id} message={message} />
                         ))}
