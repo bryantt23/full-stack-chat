@@ -3,6 +3,7 @@ import Message from './Message';
 import { getMessages } from '../services/messages';
 import useWebSocket from 'react-use-websocket';
 import "./Chat.css"
+
 const WS_URL = "ws://localhost:3000";
 
 function Chat() {
@@ -18,7 +19,7 @@ function Chat() {
         },
         onMessage: (event) => {
             console.log('WebSocket message received:', event.data);
-            setMessages(prev => [...prev, JSON.parse(event.data)])
+            setMessages(prev => [...prev, JSON.parse(event.data)]);
             setTimeout(scrollToBottom, 100);
         }
     });
@@ -27,22 +28,28 @@ function Chat() {
     const [message, setMessage] = useState("");
     const [name, setName] = useState("anonymous");
 
-    const endOfMessagesRef = useRef(null)
-    const topOfMessagesRef = useRef(null)
+    const focusRef = useRef(null);
+    const messageListRef = useRef(null);
 
-    async function fetchData(limit = 7, beforeId = null, append = false) {
-        const params = { limit }
+    async function fetchData(limit = 7, beforeId = null, prepend = false) {
+        const params = { limit };
         if (beforeId) {
-            params.beforeId = beforeId
+            params.beforeId = beforeId;
         }
         const newMessages = await getMessages(params);
-        if (append) {
-            setMessages(prev => [...newMessages, ...prev]);
+        if (prepend) {
+            setMessages(prev => {
+                const currentHeight = messageListRef.current.scrollHeight;
+                const updatedMessages = [...newMessages, ...prev];
+                setTimeout(() => {
+                    messageListRef.current.scrollTop = messageListRef.current.scrollHeight - currentHeight;
+                }, 100);
+                return updatedMessages;
+            });
+        } else {
+            setMessages(newMessages);
+            scrollToBottom();
         }
-        else {
-            setMessages(newMessages)
-        }
-        scrollToBottom()
     }
 
     useEffect(() => {
@@ -51,8 +58,8 @@ function Chat() {
 
     const handleScroll = async (e) => {
         if (e.currentTarget.scrollTop === 0) {
-            console.log("on top!")
-            const firstMessageId = messages[0]?._id
+            console.log("on top!");
+            const firstMessageId = messages[0]?._id;
             if (firstMessageId) {
                 await fetchData(7, firstMessageId, true);
             }
@@ -62,11 +69,11 @@ function Chat() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const newMessage = { name, message };
-        sendMessage(JSON.stringify(newMessage))
+        sendMessage(JSON.stringify(newMessage));
     };
 
     const scrollToBottom = () => {
-        endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" })
+        focusRef.current?.scrollIntoView({ behavior: "smooth" });
     }
 
     return (
@@ -75,12 +82,12 @@ function Chat() {
 
             <div className="middle">
                 <div className="message-list-container">
-                    <ul className="message-list" onScroll={handleScroll}>
-                        <div ref={topOfMessagesRef} />
+                    <ul className="message-list" ref={messageListRef} onScroll={handleScroll}>
+                        <div ref={focusRef} />
                         {messages.map((message) => (
                             <Message key={message._id} message={message} />
                         ))}
-                        <div ref={endOfMessagesRef} />
+                        <div ref={focusRef} />
                     </ul>
                 </div>
                 <div className='form-container'>
