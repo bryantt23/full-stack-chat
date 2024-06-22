@@ -30,9 +30,18 @@ function Chat() {
     const endOfMessagesRef = useRef(null)
     const topOfMessagesRef = useRef(null)
 
-    async function fetchData() {
-        const messagesData = await getMessages();
-        setMessages(messagesData);
+    async function fetchData(limit = 7, beforeId = null, append = false) {
+        const params = { limit }
+        if (beforeId) {
+            params.beforeId = beforeId
+        }
+        const newMessages = await getMessages(params);
+        if (append) {
+            setMessages(prev => [...newMessages, ...prev]);
+        }
+        else {
+            setMessages(newMessages)
+        }
         scrollToBottom()
     }
 
@@ -43,9 +52,10 @@ function Chat() {
     const handleScroll = async (e) => {
         if (e.currentTarget.scrollTop === 0) {
             console.log("on top!")
-            const data = await getMessages({ id: messages[0]._id, count: 3, backward: true });
-            console.log("🚀 ~ handleScroll ~ data:", data)
-
+            const firstMessageId = messages[0]?._id
+            if (firstMessageId) {
+                await fetchData(7, firstMessageId, true);
+            }
         }
     }
 

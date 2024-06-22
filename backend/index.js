@@ -28,14 +28,16 @@ app.get('/', (req, res) => {
 })
 
 app.get("/api/messages", async (req, res) => {
-    const { id, count = 10, backward = true } = req.query
+    const { limit = 10, beforeId, afterId } = req.query
     let query = {}
-    if (id) {
-        query._id = backward === 'true' ? { $lt: id } : { $gt: id }
+    if (beforeId) {
+        query._id = { $lt: beforeId }
+    } else if (afterId) {
+        query._id = { $gt: id }
     }
     try {
-        const messages = await Message.find(query).sort({ createdAt: backward === "true" ? -1 : 1 }).limit(Number(count))
-        res.json(messages)
+        const messages = await Message.find(query).sort({ createdAt: -1 }).limit(Number(limit))
+        res.json(messages.reverse())
     } catch (error) {
         res.status(500).json({ message: 'Error fetching messages', error })
     }
