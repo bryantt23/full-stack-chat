@@ -30,9 +30,7 @@ app.get("/api/messages", async (req, res) => {
     }
 })
 
-app.post("/api/messages", async (req, res) => {
-    const { name, message } = req.body
-
+const addMessage = async (res, name, message) => {
     if (!name || !message) {
         return res.state(400).json({ message: "Name and message are required" })
     }
@@ -44,6 +42,11 @@ app.post("/api/messages", async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: 'Error saving message', error });
     }
+}
+
+app.post("/api/messages", async (req, res) => {
+    const { name, message } = req.body
+    return addMessage(res, name, message)
 })
 
 app.listen(PORT, () => {
